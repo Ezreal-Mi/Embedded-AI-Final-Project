@@ -1,0 +1,74 @@
+import torch
+
+# ── LLM ──────────────────────────────────────────────────────────────────────
+LLM_MODEL_NAME     = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+LLM_GGUF_PATH      = "models/qwen2.5-3b-instruct-q3_k_m.gguf"
+
+if torch.cuda.is_available():
+    LLM_BACKEND       = "transformers"
+    LLM_DEVICE        = "cuda"
+    LLM_DTYPE         = torch.float16
+elif torch.backends.mps.is_available():
+    LLM_BACKEND       = "transformers"
+    LLM_DEVICE        = "mps"
+    LLM_DTYPE         = torch.float16
+else:
+    LLM_BACKEND       = "llama_cpp"
+    LLM_DEVICE        = "cpu"
+    LLM_DTYPE         = torch.float32
+
+LLM_MAX_NEW_TOKENS = 150
+
+# ── STT (Whisper) ─────────────────────────────────────────────────────────────
+WHISPER_MODEL_SIZE   = "tiny.en"
+WHISPER_DEVICE       = "cpu"
+WHISPER_COMPUTE_TYPE = "int8"
+
+# ── Embedding ─────────────────────────────────────────────────────────────────
+EMBED_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+
+# ── TTS ───────────────────────────────────────────────────────────────────────
+TTS_RATE = 170
+PIPER_MODEL_PATH = "voices/en_US-lessac-medium.onnx"
+
+# ── Assistant identity ────────────────────────────────────────────────────────
+ASSISTANT_NAME = "cathey"
+ASSISTANT_NAME_VARIANTS = [
+    "cathey", "cathy", "kathy", "katie", "cathie",
+    "cafe", "kaffee", "cate", "catty",
+    "cassie", "kasey", "kazzy",
+]
+
+# ── Audio capture ─────────────────────────────────────────────────────────────
+SAMPLE_RATE           = 16000
+CHANNELS              = 1
+AUDIO_DTYPE           = "float32"
+ENERGY_THRESHOLD      = 0.05
+
+FRAME_DURATION        = 0.1
+FRAME_SAMPLES         = int(SAMPLE_RATE * FRAME_DURATION)
+SILENCE_SECONDS       = 0.5
+MIN_SPEECH_SECONDS    = 0.3
+MAX_UTTERANCE_SECONDS = 8.0
+PRE_ROLL_SECONDS      = 0.3
+
+SILENCE_FRAMES = int(SILENCE_SECONDS / FRAME_DURATION)
+PRE_ROLL_FRAMES = int(PRE_ROLL_SECONDS / FRAME_DURATION)
+MAX_FRAMES     = int(MAX_UTTERANCE_SECONDS / FRAME_DURATION)
+
+# ── Memory ────────────────────────────────────────────────────────────────────
+MEMORY_DIR          = "cathey_memory"
+WORKING_MAXLEN      = 8
+SKILL_SIM_THRESHOLD = 0.92   # procedural memory cosine similarity cutoff
+EPISODE_DIST_CUTOFF = 0.6    # episodic RAG: keep episodes with distance < this
+
+# ── GPIO hardware ─────────────────────────────────────────────────────────────
+WINDOW_PINS        = [17, 27, 22, 23]   # ULN2003 IN1-IN4 → Pi Pins 11,13,15,16
+WINDOW_TOTAL_STEPS = 2048               # one full revolution open/close
+
+# ── LoRA fine-tuning ──────────────────────────────────────────────────────────
+LORA_R                = 8
+LORA_ALPHA            = 16
+LORA_ADAPTER_DIR      = "cathey_lora_adapter"        # training output root
+LORA_MERGED_DIR       = "cathey_lora_merged"
+LORA_INFERENCE_PATH   = "cathey_lora_adapter/final_adapter"  # loaded at inference time

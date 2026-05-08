@@ -3,3 +3,17 @@ __pycache__/
 *.pyc
 .pytest_cache/
 *.egg-info/
+.DS_Store
+**/.DS_Store
+
+# GGUF model files (too large for git)
+models/
+
+# Claude Code local state (worktrees, cache)
+.claude/
+Cathey_Tech_Slides.mp4
+Cathey_Presentation.pptx
+TECHNICAL_REPORT.md
+presentation/
+report/
+CLAUDE.md
