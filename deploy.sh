@@ -19,12 +19,12 @@ echo "==> Installing llama-cpp-python with OpenBLAS"
 ssh "$PI_HOST" "CMAKE_ARGS='-DGGML_BLAS=ON -DGGML_BLAS_VENDOR=OpenBLAS' \
     pip3 install llama-cpp-python --break-system-packages --no-cache-dir"
 
-echo "==> Downloading GGUF model (if needed, ~2GB)"
+echo "==> Downloading GGUF model (if needed, ~1.5GB)"
 ssh "$PI_HOST" "mkdir -p ~/nova/models && \
-    [ -f ~/nova/models/qwen2.5-3b-instruct-q4_k_m.gguf ] || \
+    [ -f ~/nova/models/qwen2.5-3b-instruct-q3_k_m.gguf ] || \
     wget -q --show-progress \
-      -O ~/nova/models/qwen2.5-3b-instruct-q4_k_m.gguf \
-      'https://huggingface.co/Qwen/Qwen2.5-3B-Instruct-GGUF/resolve/main/qwen2.5-3b-instruct-q4_k_m.gguf'"
+      -O ~/nova/models/qwen2.5-3b-instruct-q3_k_m.gguf \
+      'https://huggingface.co/Qwen/Qwen2.5-3B-Instruct-GGUF/resolve/main/qwen2.5-3b-instruct-q3_k_m.gguf'"
 
 echo "==> Downloading Piper voice model (if needed)"
 ssh "$PI_HOST" "mkdir -p ~/nova/voices && \
@@ -75,6 +75,6 @@ echo "    exit"
 echo ""
 read -rp "Start Cathey now? [y/N] " answer
 if [[ "${answer,,}" == "y" ]]; then
-    ssh "$PI_HOST" "sudo systemctl start bt-speaker && sleep 2 && sudo systemctl start nova"
-    echo "Cathey started. Follow logs: ssh ${PI_HOST} 'journalctl -u nova -f'"
+    ssh "$PI_HOST" "sudo systemctl start bt-speaker && sleep 2 && sudo systemctl start cathey"
+    echo "Cathey started. Follow logs: ssh ${PI_HOST} 'journalctl -u cathey -f'"
 fi
