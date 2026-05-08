@@ -48,17 +48,18 @@ All three 1.5B variants score only 20% on `general_qa` — they consistently con
 It achieves the highest overall accuracy (85%) with lower latency than 3B-Q4_K_M (3.9 s vs 5.7 s avg), saving 32% per inference call. This is because shorter quantization = fewer bytes to load per weight during matrix multiply on the ARM CPU.
 
 **5. The rule-based fast path makes model speed less critical for direct commands.**  
-In the production Nova pipeline, unambiguous direct commands (turn on/off, set temperature, open/close) are intercepted by a regex pre-filter before the LLM is called. This covers ~70% of real-world home control requests at <5 ms. The LLM is only invoked for ambiguous or conversational inputs, where 3B-Q3_K_M's 3.9 s average is acceptable.
+In the Cathey pipeline, unambiguous direct commands (turn on/off, set temperature, open/close) are intercepted by a regex pre-filter before the LLM is called. This covers ~70% of real-world home control requests at <5 ms. The LLM is only invoked for ambiguous or conversational inputs, where 3B-Q3_K_M's 3.9 s average is acceptable.
 
 ---
 
-## Recommendation
+## Deployed Configuration
 
-**Switch production model from `3B-Q4_K_M` to `3B-Q3_K_M`.**
+**`3B-Q3_K_M` is the selected production model** (`config.py: LLM_GGUF_PATH`).
 
-- Accuracy improves: 75% → 85% (+10 pp)
-- Average latency decreases: 5712 ms → 3887 ms (−32%)
-- Model size decreases: 2.0 GB → 1.5 GB (−25% storage)
-- No code changes required; update `LLM_GGUF_PATH` in `config.py`
+This choice was validated by the benchmark:
 
-The only tradeoff is `Cmd Acc` drops from 100% to 80% — meaning 1 in 5 direct\_command cases has a wrong device or action. In practice, the rule-based pre-filter handles the most common direct commands with 100% accuracy, so the LLM direct\_command path handles edge cases where some miss rate is acceptable.
+- Highest overall type accuracy: **85%** (vs 75% for 3B-Q4_K_M)
+- Lower average latency: **3887 ms** (vs 5712 ms, −32%)
+- Smaller footprint: **1.5 GB** (vs 2.0 GB, −25%)
+
+The only tradeoff is `Cmd Acc` at 80% vs 100% for 3B-Q4_K_M. In practice, the rule-based pre-filter handles the most common direct commands with 100% accuracy, so the LLM direct\_command path covers edge cases where some miss rate is acceptable.

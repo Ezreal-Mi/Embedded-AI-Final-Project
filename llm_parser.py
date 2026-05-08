@@ -1,13 +1,12 @@
 """
-LLM module: loads a configurable instruction-tuned model (default: Qwen2.5-3B-Instruct)
-and exposes three inference methods:
+LLM module: loads a configurable instruction-tuned model and exposes three inference methods:
   - parse_unified()    classify user text → direct_command / needs_clarification / general_qa / invalid
   - resolve_followup() resolve user reply to a clarification question → direct_command / invalid
   - answer_qa()        generate a plain-text answer using RAG context
 
-On Mac (MPS/CUDA): uses HuggingFace transformers with float16.
-On Pi 5 (CPU): uses llama-cpp-python with a GGUF Q4_K_M quantized model.
-Backend is selected via LLM_BACKEND in config.py.
+On Mac/GPU (MPS/CUDA): uses HuggingFace transformers with TinyLlama-1.1B-Chat (float16).
+On Pi 5 (CPU): uses llama-cpp-python with Qwen2.5-3B-Instruct GGUF Q3_K_M.
+Backend is selected automatically via LLM_BACKEND in config.py.
 """
 
 import os
