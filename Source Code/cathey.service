@@ -1,0 +1,17 @@
+[Unit]
+Description=Cathey Smart Home Assistant
+After=network.target sound.target bt-speaker.service
+Wants=bt-speaker.service
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/nova
+ExecStart=/usr/bin/python3 /home/pi/nova/cathey.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
