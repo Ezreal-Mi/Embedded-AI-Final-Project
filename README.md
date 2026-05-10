@@ -42,7 +42,7 @@ Embedded-AI-Final-Project/
 
 ## Intent Categories
 
-| Category | Trigger | Example |
+| Category | Trigger | Example | 
 |---|---|---|
 | `direct_command` | Device + explicit action | "Cathey, turn on the light." |
 | `needs_clarification` | Vague feeling / preference | "Cathey, it's a bit dark." |
